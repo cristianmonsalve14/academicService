@@ -14,7 +14,8 @@ Este microservicio sigue una arquitectura por capas:
 - **Service** → Lógica de negocio  
 - **Repository** → Acceso a base de datos  
 - **Model** → Entidades JPA (Course, Student, Enrollment, Subject, Evaluation)  
-- **Security** → Configuración de seguridad (en preparación para JWT)  
+- **Security** → Configuración de seguridad con JWT  
+- **Util** → Utilidades para validación y procesamiento de JWT  
 
 ---
 
@@ -25,6 +26,7 @@ Este microservicio sigue una arquitectura por capas:
 - Spring Web  
 - Spring Data JPA  
 - Spring Security  
+- JWT (JSON Web Tokens) con jjwt 0.11.5  
 - Maven  
 - PostgreSQL  
 
@@ -49,6 +51,8 @@ Ejemplo de configuración:
 
     server.port=8082
 
+    jwt.secret=tuClaveSecretaParaJWT_MinimoDebeSerDe256Bits_UsaUnaClaveSegura123
+
 3. Ejecuta la aplicación:
 
 ```bash
@@ -59,38 +63,55 @@ mvn clean spring-boot:run
 
 ## 🔑 Endpoints principales
 
+> **⚠️ Todos los endpoints requieren autenticación JWT mediante header `Authorization: Bearer {token}`**
+
 ### 📘 Cursos
 
 - `POST /courses` — Crear curso  
-- `GET /courses` — Listar cursos  
+- `GET /courses` — Listar todos los cursos  
+- `GET /courses/{id}` — Obtener curso por ID  
+- `PUT /courses/{id}` — Actualizar curso  
+- `DELETE /courses/{id}` — Eliminar curso  
 
 ---
 
 ### 👤 Estudiantes
 
 - `POST /students` — Crear estudiante  
-- `GET /students` — Listar estudiantes  
+- `GET /students` — Listar todos los estudiantes  
+- `GET /students/{id}` — Obtener estudiante por ID  
+- `PUT /students/{id}` — Actualizar estudiante  
+- `DELETE /students/{id}` — Eliminar estudiante  
 
 ---
 
 ### 📋 Matrículas
 
-- `POST /enrollments` — Inscribir estudiante en curso  
-- `GET /enrollments` — Listar matrículas  
+- `POST /enrollments` — Crear matrícula (inscribir estudiante en curso)  
+- `GET /enrollments` — Listar todas las matrículas  
+- `GET /enrollments/{id}` — Obtener matrícula por ID  
+- `PUT /enrollments/{id}` — Actualizar matrícula  
+- `DELETE /enrollments/{id}` — Eliminar matrícula  
 
 ---
 
 ### 📚 Asignaturas
 
 - `POST /subjects` — Crear asignatura  
-- `GET /subjects` — Listar asignaturas  
+- `GET /subjects` — Listar todas las asignaturas  
+- `GET /subjects/{id}` — Obtener asignatura por ID  
+- `PUT /subjects/{id}` — Actualizar asignatura  
+- `DELETE /subjects/{id}` — Eliminar asignatura  
 
 ---
 
 ### 📝 Evaluaciones
 
 - `POST /evaluations` — Crear evaluación  
-- `GET /evaluations` — Listar evaluaciones  
+- `GET /evaluations` — Listar todas las evaluaciones  
+- `GET /evaluations/{id}` — Obtener evaluación por ID  
+- `PUT /evaluations/{id}` — Actualizar evaluación  
+- `DELETE /evaluations/{id}` — Eliminar evaluación  
 
 ---
 
@@ -121,9 +142,22 @@ academicService/
 
 ---
 
-## 🔐 Integración (próximamente)
+## 🔐 Integración con authService
 
-Este microservicio será integrado con `authService` mediante autenticación JWT para proteger los endpoints y validar usuarios autenticados.
+Este microservicio está **completamente integrado** con `authService` mediante autenticación JWT:
+
+- **JwtFilter**: Intercepta todas las peticiones y valida el token JWT  
+- **JwtUtil**: Utilidad para extraer información del token (username, claims)  
+- **SecurityConfig**: Configuración de Spring Security con autenticación JWT obligatoria  
+- **CORS**: Configurado para aceptar peticiones desde el frontend (puertos 5173/5174)  
+
+### Flujo de autenticación:
+
+1. El usuario se autentica en `authService` y obtiene un token JWT  
+2. El frontend envía el token en el header: `Authorization: Bearer {token}`  
+3. `JwtFilter` intercepta la petición y valida el token  
+4. Si es válido, permite el acceso al endpoint solicitado  
+5. Si no es válido, retorna error 401 Unauthorized
 
 ---
 

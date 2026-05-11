@@ -26,4 +26,22 @@ public class EvaluationController {
     public List<Evaluation> getAllEvaluations() {
         return evaluationService.getAllEvaluations();
     }
+
+    // ✅ obtener por id
+    @GetMapping("/{id}")
+    public Evaluation getEvaluation(@PathVariable Long id) {
+        return evaluationService.getEvaluationById(id).orElse(null);
+    }
+
+    // ✅ actualizar evaluación
+    @PutMapping("/{id}")
+    public Evaluation updateEvaluation(@PathVariable Long id, @RequestBody Evaluation evaluation) {
+        return evaluationService.updateEvaluation(id, evaluation);
+    }
+
+    // ✅ eliminar evaluación
+    @DeleteMapping("/{id}")
+    public void deleteEvaluation(@PathVariable Long id) {
+        evaluationService.deleteEvaluation(id);
+    }
 }

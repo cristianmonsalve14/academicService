@@ -32,4 +32,16 @@ public class StudentController {
     public Student getStudent(@PathVariable Long id) {
         return studentService.getStudentById(id).orElse(null);
     }
+
+    //actualizar estudiante
+    @PutMapping("/{id}")
+    public Student updateStudent(@PathVariable Long id, @RequestBody Student student) {
+        return studentService.updateStudent(id, student);
+    }
+
+    //eliminar estudiante
+    @DeleteMapping("/{id}")
+    public void deleteStudent(@PathVariable Long id) {
+        studentService.deleteStudent(id);
+    }
 }

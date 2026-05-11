@@ -26,4 +26,22 @@ public class SubjectController {
     public List<Subject> getAllSubjects() {
         return subjectService.getAllSubjects();
     }
+
+    //obtener por id
+    @GetMapping("/{id}")
+    public Subject getSubject(@PathVariable Long id) {
+        return subjectService.getSubjectById(id).orElse(null);
+    }
+
+    //actualizar asignatura
+    @PutMapping("/{id}")
+    public Subject updateSubject(@PathVariable Long id, @RequestBody Subject subject) {
+        return subjectService.updateSubject(id, subject);
+    }
+
+    //eliminar asignatura
+    @DeleteMapping("/{id}")
+    public void deleteSubject(@PathVariable Long id) {
+        subjectService.deleteSubject(id);
+    }
 }

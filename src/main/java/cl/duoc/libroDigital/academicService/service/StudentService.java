@@ -12,4 +12,8 @@ public interface StudentService {
     List<Student> getAllStudents();
 
     Optional<Student> getStudentById(Long id);
+
+    Student updateStudent(Long id, Student student);
+
+    void deleteStudent(Long id);
 }

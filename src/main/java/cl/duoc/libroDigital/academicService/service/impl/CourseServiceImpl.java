@@ -30,4 +30,28 @@ public class CourseServiceImpl implements CourseService {
     public Optional<Course> getCourseById(Long id) {
         return courseRepository.findById(id);
     }
+
+    @Override
+    public Course updateCourse(Long id, Course course) {
+        Optional<Course> existingCourse = courseRepository.findById(id);
+        if (existingCourse.isPresent()) {
+            Course updatedCourse = existingCourse.get();
+            if (course.getName() != null) {
+                updatedCourse.setName(course.getName());
+            }
+            if (course.getYear() != null) {
+                updatedCourse.setYear(course.getYear());
+            }
+            if (course.getTeacherId() != null) {
+                updatedCourse.setTeacherId(course.getTeacherId());
+            }
+            return courseRepository.save(updatedCourse);
+        }
+        return null;
+    }
+
+    @Override
+    public void deleteCourse(Long id) {
+        courseRepository.deleteById(id);
+    }
 }

@@ -1,69 +1,27 @@
-package cl.duoc.libroDigital.academicService.model;
+package cl.duoc.libroDigital.academicService.dto;
 
-import jakarta.persistence.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
-@Entity
-@Table(name = "enrollments")
-public class Enrollment {
+public class EnrollmentDTO {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // ===== RELACIONES =====
-    @Column(name = "student_id")
     private Long studentId;
-
-    @Column(name = "course_id")
     private Long courseId;
 
-    // ===== DATOS MATRÍCULA =====
-    @Column(name = "enrollment_date")
     private LocalDate enrollmentDate;
-
-    @Column(name = "academic_year")
     private Integer academicYear;
 
-    @Column(name = "enrollment_status")
     private String enrollmentStatus;
-
-    @Column(name = "is_regular")
     private Boolean isRegular;
 
     private String observations;
 
-    // ===== AUDITORÍA =====
-    @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
-
-    @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
-    // ===== LIFECYCLE =====
-    @PrePersist
-    protected void onCreate() {
-        createdAt = LocalDateTime.now();
-        updatedAt = LocalDateTime.now();
-
-        if (enrollmentStatus == null) {
-            enrollmentStatus = "ACTIVO";
-        }
-
-        if (enrollmentDate == null) {
-            enrollmentDate = LocalDate.now();
-        }
-
-        if (academicYear == null) {
-            academicYear = LocalDate.now().getYear();
-        }
-    }
-
-    @PreUpdate
-    protected void onUpdate() {
-        updatedAt = LocalDateTime.now();
-    }
+    public EnrollmentDTO() {}
 
     // ===== GETTERS & SETTERS =====
 

@@ -1,43 +1,25 @@
-package cl.duoc.libroDigital.academicService.model;
+package cl.duoc.libroDigital.academicService.dto;
 
-import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
-@Entity
-@Table(name = "subjects")
-public class Subject {
+public class SubjectDTO {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "subject_name")
     private String subjectName;
-
-    @Column(name = "subject_code")
     private String subjectCode;
-
     private String description;
-
-    @Column(name = "subject_type")
     private String subjectType;
 
-    @Column(name = "weekly_hours")
     private Integer weeklyHours;
 
-    @Column(name = "teacher_id")
     private Long teacherId;
-
-    @Column(name = "course_id")
     private Long courseId;
 
-    @Column(name = "created_at")
     private LocalDateTime createdAt;
-
-    @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
-    public Subject() {}
+    public SubjectDTO() {}
 
     // ===== GETTERS & SETTERS =====
 
@@ -121,3 +103,4 @@ public class Subject {
         this.updatedAt = updatedAt;
     }
 }
+

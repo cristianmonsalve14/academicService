@@ -33,22 +33,60 @@ public class StudentServiceImpl implements StudentService {
 
     @Override
     public Student updateStudent(Long id, Student student) {
-        Optional<Student> existingStudent = studentRepository.findById(id);
-        if (existingStudent.isPresent()) {
-            Student updatedStudent = existingStudent.get();
-            if (student.getName() != null) {
-                updatedStudent.setName(student.getName());
-            }
-            if (student.getEmail() != null) {
-                updatedStudent.setEmail(student.getEmail());
-            }
-            return studentRepository.save(updatedStudent);
-        }
-        return null;
+
+        return studentRepository.findById(id).map(existingStudent -> {
+
+            // Identificación
+            if (student.getRut() != null) existingStudent.setRut(student.getRut());
+            if (student.getFirstName() != null) existingStudent.setFirstName(student.getFirstName());
+            if (student.getSecondName() != null) existingStudent.setSecondName(student.getSecondName());
+            if (student.getLastName() != null) existingStudent.setLastName(student.getLastName());
+            if (student.getMotherLastName() != null) existingStudent.setMotherLastName(student.getMotherLastName());
+
+            // Datos personales
+            if (student.getDateOfBirth() != null) existingStudent.setDateOfBirth(student.getDateOfBirth());
+
+            // Contacto
+            if (student.getPhone() != null) existingStudent.setPhone(student.getPhone());
+            if (student.getEmail() != null) existingStudent.setEmail(student.getEmail());
+            if (student.getAddress() != null) existingStudent.setAddress(student.getAddress());
+            if (student.getCommune() != null) existingStudent.setCommune(student.getCommune());
+            if (student.getCity() != null) existingStudent.setCity(student.getCity());
+
+            // Académico
+            if (student.getEnrollmentNumber() != null) existingStudent.setEnrollmentNumber(student.getEnrollmentNumber());
+            if (student.getStudentStatus() != null) existingStudent.setStudentStatus(student.getStudentStatus());
+            if (student.getAdmissionDate() != null) existingStudent.setAdmissionDate(student.getAdmissionDate());
+            if (student.getWithdrawalDate() != null) existingStudent.setWithdrawalDate(student.getWithdrawalDate());
+
+            // Relaciones
+            if (student.getGuardianId() != null) existingStudent.setGuardianId(student.getGuardianId());
+            if (student.getUserId() != null) existingStudent.setUserId(student.getUserId());
+
+            return studentRepository.save(existingStudent);
+
+        }).orElseThrow(() -> new RuntimeException("Student not found with id " + id));
     }
 
     @Override
     public void deleteStudent(Long id) {
         studentRepository.deleteById(id);
+    }
+
+    // ===== MÉTODOS EXTRA =====
+
+    @Override
+    public Optional<Student> getStudentByRut(String rut) {
+        return studentRepository.findByRut(rut);
+    }
+
+    @Override
+    public Optional<Student> getStudentByEmail(String email) {
+        return studentRepository.findByEmail(email);
+    }
+
+    @Override
+    public List<Student> getStudentsByStatus(String studentStatus) {
+        return studentRepository.findByStudentStatus(studentStatus);
     }
 }

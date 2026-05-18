@@ -33,25 +33,63 @@ public class EnrollmentServiceImpl implements EnrollmentService {
 
     @Override
     public Enrollment updateEnrollment(Long id, Enrollment enrollment) {
-        Optional<Enrollment> existingEnrollment = enrollmentRepository.findById(id);
-        if (existingEnrollment.isPresent()) {
-            Enrollment updatedEnrollment = existingEnrollment.get();
+
+        return enrollmentRepository.findById(id).map(existing -> {
+
             if (enrollment.getStudentId() != null) {
-                updatedEnrollment.setStudentId(enrollment.getStudentId());
+                existing.setStudentId(enrollment.getStudentId());
             }
+
             if (enrollment.getCourseId() != null) {
-                updatedEnrollment.setCourseId(enrollment.getCourseId());
+                existing.setCourseId(enrollment.getCourseId());
             }
+
             if (enrollment.getEnrollmentDate() != null) {
-                updatedEnrollment.setEnrollmentDate(enrollment.getEnrollmentDate());
+                existing.setEnrollmentDate(enrollment.getEnrollmentDate());
             }
-            return enrollmentRepository.save(updatedEnrollment);
-        }
-        return null;
+
+            if (enrollment.getAcademicYear() != null) {
+                existing.setAcademicYear(enrollment.getAcademicYear());
+            }
+
+            if (enrollment.getEnrollmentStatus() != null) {
+                existing.setEnrollmentStatus(enrollment.getEnrollmentStatus());
+            }
+
+            if (enrollment.getIsRegular() != null) {
+                existing.setIsRegular(enrollment.getIsRegular());
+            }
+
+            if (enrollment.getObservations() != null) {
+                existing.setObservations(enrollment.getObservations());
+            }
+
+            return enrollmentRepository.save(existing);
+
+        }).orElseThrow(() ->
+                new RuntimeException("Matrícula no encontrada con id " + id)
+        );
     }
 
     @Override
     public void deleteEnrollment(Long id) {
         enrollmentRepository.deleteById(id);
+    }
+
+    // ===== MÉTODOS EXTRA =====
+
+    @Override
+    public List<Enrollment> getEnrollmentsByStudent(Long studentId) {
+        return enrollmentRepository.findByStudentId(studentId);
+    }
+
+    @Override
+    public List<Enrollment> getEnrollmentsByCourse(Long courseId) {
+        return enrollmentRepository.findByCourseId(courseId);
+    }
+
+    @Override
+    public List<Enrollment> getEnrollmentsByStatus(String enrollmentStatus) {
+        return enrollmentRepository.findByEnrollmentStatus(enrollmentStatus);
     }
 }

@@ -33,25 +33,75 @@ public class EvaluationServiceImpl implements EvaluationService {
 
     @Override
     public Evaluation updateEvaluation(Long id, Evaluation evaluation) {
-        Optional<Evaluation> existingEvaluation = evaluationRepository.findById(id);
-        if (existingEvaluation.isPresent()) {
-            Evaluation updatedEvaluation = existingEvaluation.get();
+
+        return evaluationRepository.findById(id).map(existing -> {
+
             if (evaluation.getName() != null) {
-                updatedEvaluation.setName(evaluation.getName());
+                existing.setName(evaluation.getName());
             }
+
             if (evaluation.getDate() != null) {
-                updatedEvaluation.setDate(evaluation.getDate());
+                existing.setDate(evaluation.getDate());
             }
+
+            if (evaluation.getCourseId() != null) {
+                existing.setCourseId(evaluation.getCourseId());
+            }
+
             if (evaluation.getSubjectId() != null) {
-                updatedEvaluation.setSubjectId(evaluation.getSubjectId());
+                existing.setSubjectId(evaluation.getSubjectId());
             }
-            return evaluationRepository.save(updatedEvaluation);
-        }
-        return null;
+
+            if (evaluation.getEvaluationType() != null) {
+                existing.setEvaluationType(evaluation.getEvaluationType());
+            }
+
+            if (evaluation.getEvaluationStatus() != null) {
+                existing.setEvaluationStatus(evaluation.getEvaluationStatus());
+            }
+
+            if (evaluation.getMaxScore() != null) {
+                existing.setMaxScore(evaluation.getMaxScore());
+            }
+
+            if (evaluation.getWeight() != null) {
+                existing.setWeight(evaluation.getWeight());
+            }
+
+            if (evaluation.getDescription() != null) {
+                existing.setDescription(evaluation.getDescription());
+            }
+
+            if (evaluation.getGrade() != null) {
+                existing.setGrade(evaluation.getGrade());
+            }
+
+            return evaluationRepository.save(existing);
+
+        }).orElseThrow(() ->
+                new RuntimeException("Evaluación no encontrada con id " + id)
+        );
     }
 
     @Override
     public void deleteEvaluation(Long id) {
         evaluationRepository.deleteById(id);
+    }
+
+    // ===== MÉTODOS EXTRA =====
+
+    @Override
+    public List<Evaluation> getEvaluationsByCourse(Long courseId) {
+        return evaluationRepository.findByCourseId(courseId);
+    }
+
+    @Override
+    public List<Evaluation> getEvaluationsBySubject(Long subjectId) {
+        return evaluationRepository.findBySubjectId(subjectId);
+    }
+
+    @Override
+    public List<Evaluation> getEvaluationsByStatus(String evaluationStatus) {
+        return evaluationRepository.findByEvaluationStatus(evaluationStatus);
     }
 }

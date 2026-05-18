@@ -1,8 +1,8 @@
-# 🔐 academicService
+# 📚 academicService
 
 Microservicio académico de la plataforma **Libro Digital**.
 
-Encargado de la gestión de cursos, estudiantes, matrículas, asignaturas y evaluaciones dentro del sistema. Forma parte de una arquitectura de microservicios desacoplados, donde la autenticación es provista por el `authService`.
+Encargado de la gestión de cursos, estudiantes, asignaturas, matrículas y evaluaciones dentro del sistema. Forma parte de una arquitectura de microservicios desacoplados, donde la autenticación es provista por el `authService`.
 
 ---
 
@@ -10,169 +10,174 @@ Encargado de la gestión de cursos, estudiantes, matrículas, asignaturas y eval
 
 Este microservicio sigue una arquitectura por capas:
 
-- **Controller** → Manejo de endpoints REST  
-- **Service** → Lógica de negocio  
-- **Repository** → Acceso a base de datos  
-- **Model** → Entidades JPA (Course, Student, Enrollment, Subject, Evaluation)  
-- **Security** → Configuración de seguridad con JWT  
-- **Util** → Utilidades para validación y procesamiento de JWT  
+- Controller → Manejo de endpoints REST  
+- Service → Lógica de negocio  
+- Repository → Acceso a base de datos  
+- Model → Entidades JPA  
+- Security → Configuración de autenticación JWT  
 
 ---
 
-## ⚙️ Stack tecnológico
+## ⚙️ Stack Tecnológico
 
 - Java 21  
 - Spring Boot 4.0.5  
 - Spring Web  
 - Spring Data JPA  
 - Spring Security  
-- JWT (JSON Web Tokens) con jjwt 0.11.5  
+- JSON Web Tokens (JWT)  
 - Maven  
 - PostgreSQL  
 
 ---
 
-## 🚀 Instalación y ejecución
+## 🚀 Instalación y Ejecución
 
-1. Clona este repositorio.  
+### 1. Configuración de Base de Datos
 
-2. Configura la base de datos en:
+Editar el archivo:
 
-`src/main/resources/application.properties`
+src/main/resources/application.properties
 
-Ejemplo de configuración:
+Ejemplo:
 
-    spring.datasource.url=jdbc:postgresql://localhost:5432/librodigital_academic
-    spring.datasource.username=postgres
-    spring.datasource.password=tu_password
+spring.datasource.url=jdbc:postgresql://localhost:5432/librodigital_academic  
+spring.datasource.username=postgres  
+spring.datasource.password=tu_password  
 
-    spring.jpa.hibernate.ddl-auto=update
-    spring.jpa.show-sql=true
+spring.jpa.hibernate.ddl-auto=update  
+spring.jpa.show-sql=true  
 
-    server.port=8082
+server.port=8082  
 
-    jwt.secret=tuClaveSecretaParaJWT_MinimoDebeSerDe256Bits_UsaUnaClaveSegura123
+jwt.secret=tuClaveSecretaParaJWT_MinimoDebeSerDe256Bits  
 
-3. Ejecuta la aplicación:
+---
 
-```bash
+### 2. Ejecutar aplicación
+
 mvn clean spring-boot:run
-```
+
+El servicio estará disponible en:
+
+http://localhost:8082  
+
+---
+
+## 🔐 Seguridad
+
+Este microservicio está protegido con JWT.
+
+✔ Todas las rutas requieren autenticación  
+✔ Token enviado en header Authorization  
+
+Formato:
+
+Authorization: Bearer {token}
 
 ---
 
 ## 🔑 Endpoints principales
 
-> **⚠️ Todos los endpoints requieren autenticación JWT mediante header `Authorization: Bearer {token}`**
-
 ### 📘 Cursos
-
-- `POST /courses` — Crear curso  
-- `GET /courses` — Listar todos los cursos  
-- `GET /courses/{id}` — Obtener curso por ID  
-- `PUT /courses/{id}` — Actualizar curso  
-- `DELETE /courses/{id}` — Eliminar curso  
+- POST /courses  
+- GET /courses  
+- GET /courses/{id}  
+- PUT /courses/{id}  
+- DELETE /courses/{id}  
 
 ---
 
 ### 👤 Estudiantes
-
-- `POST /students` — Crear estudiante  
-- `GET /students` — Listar todos los estudiantes  
-- `GET /students/{id}` — Obtener estudiante por ID  
-- `PUT /students/{id}` — Actualizar estudiante  
-- `DELETE /students/{id}` — Eliminar estudiante  
-
----
-
-### 📋 Matrículas
-
-- `POST /enrollments` — Crear matrícula (inscribir estudiante en curso)  
-- `GET /enrollments` — Listar todas las matrículas  
-- `GET /enrollments/{id}` — Obtener matrícula por ID  
-- `PUT /enrollments/{id}` — Actualizar matrícula  
-- `DELETE /enrollments/{id}` — Eliminar matrícula  
+- POST /students  
+- GET /students  
+- GET /students/{id}  
+- PUT /students/{id}  
+- DELETE /students/{id}  
 
 ---
 
 ### 📚 Asignaturas
+- POST /subjects  
+- GET /subjects  
+- GET /subjects/{id}  
+- PUT /subjects/{id}  
+- DELETE /subjects/{id}  
 
-- `POST /subjects` — Crear asignatura  
-- `GET /subjects` — Listar todas las asignaturas  
-- `GET /subjects/{id}` — Obtener asignatura por ID  
-- `PUT /subjects/{id}` — Actualizar asignatura  
-- `DELETE /subjects/{id}` — Eliminar asignatura  
+---
+
+### 📋 Matrículas
+- POST /enrollments  
+- GET /enrollments  
+- GET /enrollments/{id}  
+- PUT /enrollments/{id}  
+- DELETE /enrollments/{id}  
 
 ---
 
 ### 📝 Evaluaciones
-
-- `POST /evaluations` — Crear evaluación  
-- `GET /evaluations` — Listar todas las evaluaciones  
-- `GET /evaluations/{id}` — Obtener evaluación por ID  
-- `PUT /evaluations/{id}` — Actualizar evaluación  
-- `DELETE /evaluations/{id}` — Eliminar evaluación  
+- POST /evaluations  
+- GET /evaluations  
+- GET /evaluations/{id}  
+- PUT /evaluations/{id}  
+- DELETE /evaluations/{id}  
 
 ---
 
-## 📁 Estructura del proyecto
+## 🧾 Modelo de Datos (Resumen)
 
-```
+- Course → cursos  
+- Student → estudiantes  
+- Subject → asignaturas  
+- Enrollment → matrículas  
+- Evaluation → evaluaciones (incluye nota 1.0 - 7.0)
+
+---
+
+## 🏗️ Estructura del Proyecto
+
 academicService/
-│
 ├── controller/
 ├── service/
 ├── service/impl/
 ├── repository/
 ├── model/
 ├── security/
-└── util/ (preparado para JWT)
-```
 
 ---
 
-## 🧠 Conceptos aplicados
+## 🔗 Integración con authService
 
-- Arquitectura por capas  
-- Diseño de microservicios  
-- Persistencia con JPA  
-- Separación de responsabilidades  
-- API REST  
-- Modelado de dominio académico  
+El sistema utiliza autenticación distribuida mediante JWT:
+
+1. Usuario se autentica en authService  
+2. Recibe token JWT  
+3. El frontend envía el token en cada request  
+4. JwtFilter valida el token  
+5. Si es válido → acceso permitido  
+6. Si no → error 401  
 
 ---
 
-## 🔐 Integración con authService
+## ✅ Estado del Proyecto
 
-Este microservicio está **completamente integrado** con `authService` mediante autenticación JWT:
-
-- **JwtFilter**: Intercepta todas las peticiones y valida el token JWT  
-- **JwtUtil**: Utilidad para extraer información del token (username, claims)  
-- **SecurityConfig**: Configuración de Spring Security con autenticación JWT obligatoria  
-- **CORS**: Configurado para aceptar peticiones desde el frontend (puertos 5173/5174)  
-
-### Flujo de autenticación:
-
-1. El usuario se autentica en `authService` y obtiene un token JWT  
-2. El frontend envía el token en el header: `Authorization: Bearer {token}`  
-3. `JwtFilter` intercepta la petición y valida el token  
-4. Si es válido, permite el acceso al endpoint solicitado  
-5. Si no es válido, retorna error 401 Unauthorized
+✔ CRUD completo en todos los módulos  
+✔ Seguridad JWT implementada  
+✔ Integración con frontend  
+✔ Persistencia en PostgreSQL  
+✔ Arquitectura en capas  
 
 ---
 
 ## 👨‍💻 Autor
 
-**Cristian Monsalve**
-
+Cristian Monsalve  
+Hector Olivares
 ---
 
-## 📌 Notas
+## 📌 Observaciones
 
-Este microservicio representa el núcleo académico del sistema **Libro Digital**, permitiendo gestionar la estructura educativa completa:
+Este microservicio constituye el núcleo académico del sistema, implementando las funcionalidades principales de gestión educativa.
 
-- Cursos  
-- Estudiantes  
-- Matrículas  
-- Asignaturas  
-- Evaluaciones  
+Se aplicaron buenas prácticas como separación de responsabilidades, arquitectura por capas y uso de DTO para comunicación con el frontend.
+``

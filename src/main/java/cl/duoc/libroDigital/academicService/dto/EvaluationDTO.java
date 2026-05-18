@@ -1,38 +1,23 @@
-package cl.duoc.libroDigital.academicService.model;
+package cl.duoc.libroDigital.academicService.dto;
 
-import jakarta.persistence.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
-@Entity
-@Table(name = "evaluations")
-public class Evaluation {
+public class EvaluationDTO {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // ===== RELACIONES =====
-    @Column(name = "subject_id")
     private Long subjectId;
-
-    @Column(name = "course_id")
     private Long courseId;
 
-    // ===== DATOS DE LA EVALUACIÓN =====
     private String name;
 
     private LocalDate date;
 
-    @Column(name = "evaluation_type")
     private String evaluationType;
-
-    @Column(name = "evaluation_status")
     private String evaluationStatus;
 
-    @Column(name = "max_score")
     private Double maxScore;
-
     private Double weight;
 
     private String description;
@@ -40,40 +25,10 @@ public class Evaluation {
     // ✅ NOTA CHILENA
     private Double grade;
 
-    // ===== AUDITORÍA =====
-    @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
-
-    @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
-    // ===== LIFECYCLE =====
-    @PrePersist
-    protected void onCreate() {
-        createdAt = LocalDateTime.now();
-        updatedAt = LocalDateTime.now();
-
-        if (evaluationStatus == null) {
-            evaluationStatus = "ACTIVO";
-        }
-
-        if (date == null) {
-            date = LocalDate.now();
-        }
-    }
-
-    @PreUpdate
-    protected void onUpdate() {
-        updatedAt = LocalDateTime.now();
-    }
-
-    // ===== VALIDACIÓN DE NOTA 🇨🇱 =====
-    public void setGrade(Double grade) {
-        if (grade != null && (grade < 1.0 || grade > 7.0)) {
-            throw new IllegalArgumentException("La nota debe estar entre 1.0 y 7.0");
-        }
-        this.grade = grade;
-    }
+    public EvaluationDTO() {}
 
     // ===== GETTERS & SETTERS =====
 
@@ -159,6 +114,10 @@ public class Evaluation {
 
     public Double getGrade() {
         return grade;
+    }
+
+    public void setGrade(Double grade) {
+        this.grade = grade;
     }
 
     public LocalDateTime getCreatedAt() {

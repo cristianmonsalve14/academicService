@@ -33,22 +33,56 @@ public class SubjectServiceImpl implements SubjectService {
 
     @Override
     public Subject updateSubject(Long id, Subject subject) {
-        Optional<Subject> existingSubject = subjectRepository.findById(id);
-        if (existingSubject.isPresent()) {
-            Subject updatedSubject = existingSubject.get();
-            if (subject.getName() != null) {
-                updatedSubject.setName(subject.getName());
+
+        return subjectRepository.findById(id).map(existingSubject -> {
+
+            if (subject.getSubjectCode() != null) {
+                existingSubject.setSubjectCode(subject.getSubjectCode());
             }
+
+            if (subject.getSubjectName() != null) {
+                existingSubject.setSubjectName(subject.getSubjectName());
+            }
+
+            if (subject.getDescription() != null) {
+                existingSubject.setDescription(subject.getDescription());
+            }
+
+            if (subject.getSubjectType() != null) {
+                existingSubject.setSubjectType(subject.getSubjectType());
+            }
+
+            if (subject.getWeeklyHours() != null) {
+                existingSubject.setWeeklyHours(subject.getWeeklyHours());
+            }
+
+            if (subject.getTeacherId() != null) {
+                existingSubject.setTeacherId(subject.getTeacherId());
+            }
+
             if (subject.getCourseId() != null) {
-                updatedSubject.setCourseId(subject.getCourseId());
+                existingSubject.setCourseId(subject.getCourseId());
             }
-            return subjectRepository.save(updatedSubject);
-        }
-        return null;
+
+            return subjectRepository.save(existingSubject);
+
+        }).orElseThrow(() -> new RuntimeException("Subject not found with id " + id));
     }
 
     @Override
     public void deleteSubject(Long id) {
         subjectRepository.deleteById(id);
+    }
+
+    // ===== MÉTODOS EXTRA =====
+
+    @Override
+    public Optional<Subject> getSubjectByCode(String subjectCode) {
+        return subjectRepository.findBySubjectCode(subjectCode);
+    }
+
+    @Override
+    public List<Subject> getSubjectsByTeacher(Long teacherId) {
+        return subjectRepository.findByTeacherId(teacherId);
     }
 }

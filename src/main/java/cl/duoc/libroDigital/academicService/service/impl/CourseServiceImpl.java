@@ -39,11 +39,29 @@ public class CourseServiceImpl implements CourseService {
             if (course.getName() != null) {
                 updatedCourse.setName(course.getName());
             }
-            if (course.getYear() != null) {
-                updatedCourse.setYear(course.getYear());
+            if (course.getGrade() != null) {
+                updatedCourse.setGrade(course.getGrade());
             }
-            if (course.getTeacherId() != null) {
-                updatedCourse.setTeacherId(course.getTeacherId());
+            if (course.getAcademicYear() != null) {
+                updatedCourse.setAcademicYear(course.getAcademicYear());
+            }
+            if (course.getShift() != null) {
+                updatedCourse.setShift(course.getShift());
+            }
+            if (course.getHeadTeacherId() != null) {
+                updatedCourse.setHeadTeacherId(course.getHeadTeacherId());
+            }
+            if (course.getMaxCapacity() != null) {
+                updatedCourse.setMaxCapacity(course.getMaxCapacity());
+            }
+            if (course.getLevel() != null) {
+                updatedCourse.setLevel(course.getLevel());
+            }
+            if (course.getClassroom() != null) {
+                updatedCourse.setClassroom(course.getClassroom());
+            }
+            if (course.getCourseStatus() != null) {
+                updatedCourse.setCourseStatus(course.getCourseStatus());
             }
             return courseRepository.save(updatedCourse);
         }

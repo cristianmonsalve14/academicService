@@ -16,19 +16,16 @@ public class Evaluation {
     @Column(name = "subject_id")
     private Long subjectId;
 
-    @Column(name = "course_id")
-    private Long courseId;
-
     // ===== DATOS DE LA EVALUACIÓN =====
     private String name;
 
     private LocalDate date;
 
-    @Column(name = "evaluation_type")
-    private String evaluationType;
+    @Column(name = "evaluation_type_id", nullable = false)
+    private Short evaluationTypeId = 1;
 
-    @Column(name = "evaluation_status")
-    private String evaluationStatus;
+    @Column(name = "evaluation_status_id", nullable = false)
+    private Short evaluationStatusId = 1;
 
     @Column(name = "max_score")
     private Double maxScore;
@@ -36,9 +33,6 @@ public class Evaluation {
     private Double weight;
 
     private String description;
-
-    // ✅ NOTA CHILENA
-    private Double grade;
 
     // ===== AUDITORÍA =====
     @Column(name = "created_at", updatable = false)
@@ -53,9 +47,8 @@ public class Evaluation {
         createdAt = LocalDateTime.now();
         updatedAt = LocalDateTime.now();
 
-        if (evaluationStatus == null) {
-            evaluationStatus = "ACTIVO";
-        }
+        if (evaluationStatusId == null) evaluationStatusId = 1;
+        if (evaluationTypeId == null) evaluationTypeId = 1;
 
         if (date == null) {
             date = LocalDate.now();
@@ -65,14 +58,6 @@ public class Evaluation {
     @PreUpdate
     protected void onUpdate() {
         updatedAt = LocalDateTime.now();
-    }
-
-    // ===== VALIDACIÓN DE NOTA 🇨🇱 =====
-    public void setGrade(Double grade) {
-        if (grade != null && (grade < 1.0 || grade > 7.0)) {
-            throw new IllegalArgumentException("La nota debe estar entre 1.0 y 7.0");
-        }
-        this.grade = grade;
     }
 
     // ===== GETTERS & SETTERS =====
@@ -93,14 +78,6 @@ public class Evaluation {
         this.subjectId = subjectId;
     }
 
-    public Long getCourseId() {
-        return courseId;
-    }
-
-    public void setCourseId(Long courseId) {
-        this.courseId = courseId;
-    }
-
     public String getName() {
         return name;
     }
@@ -117,21 +94,10 @@ public class Evaluation {
         this.date = date;
     }
 
-    public String getEvaluationType() {
-        return evaluationType;
-    }
-
-    public void setEvaluationType(String evaluationType) {
-        this.evaluationType = evaluationType;
-    }
-
-    public String getEvaluationStatus() {
-        return evaluationStatus;
-    }
-
-    public void setEvaluationStatus(String evaluationStatus) {
-        this.evaluationStatus = evaluationStatus;
-    }
+    public Short getEvaluationTypeId() { return evaluationTypeId; }
+    public void setEvaluationTypeId(Short evaluationTypeId) { this.evaluationTypeId = evaluationTypeId; }
+    public Short getEvaluationStatusId() { return evaluationStatusId; }
+    public void setEvaluationStatusId(Short evaluationStatusId) { this.evaluationStatusId = evaluationStatusId; }
 
     public Double getMaxScore() {
         return maxScore;
@@ -155,10 +121,6 @@ public class Evaluation {
 
     public void setDescription(String description) {
         this.description = description;
-    }
-
-    public Double getGrade() {
-        return grade;
     }
 
     public LocalDateTime getCreatedAt() {

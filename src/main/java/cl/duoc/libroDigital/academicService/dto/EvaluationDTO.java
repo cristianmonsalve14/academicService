@@ -22,9 +22,6 @@ public class EvaluationDTO {
 
     private String description;
 
-    // ✅ NOTA CHILENA
-    private Double grade;
-
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
@@ -110,14 +107,6 @@ public class EvaluationDTO {
 
     public void setDescription(String description) {
         this.description = description;
-    }
-
-    public Double getGrade() {
-        return grade;
-    }
-
-    public void setGrade(Double grade) {
-        this.grade = grade;
     }
 
     public LocalDateTime getCreatedAt() {

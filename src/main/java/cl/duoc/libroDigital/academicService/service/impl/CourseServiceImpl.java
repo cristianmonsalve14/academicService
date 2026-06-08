@@ -33,39 +33,17 @@ public class CourseServiceImpl implements CourseService {
 
     @Override
     public Course updateCourse(Long id, Course course) {
-        Optional<Course> existingCourse = courseRepository.findById(id);
-        if (existingCourse.isPresent()) {
-            Course updatedCourse = existingCourse.get();
-            if (course.getName() != null) {
-                updatedCourse.setName(course.getName());
-            }
-            if (course.getGrade() != null) {
-                updatedCourse.setGrade(course.getGrade());
-            }
-            if (course.getAcademicYear() != null) {
-                updatedCourse.setAcademicYear(course.getAcademicYear());
-            }
-            if (course.getShift() != null) {
-                updatedCourse.setShift(course.getShift());
-            }
-            if (course.getHeadTeacherId() != null) {
-                updatedCourse.setHeadTeacherId(course.getHeadTeacherId());
-            }
-            if (course.getMaxCapacity() != null) {
-                updatedCourse.setMaxCapacity(course.getMaxCapacity());
-            }
-            if (course.getLevel() != null) {
-                updatedCourse.setLevel(course.getLevel());
-            }
-            if (course.getClassroom() != null) {
-                updatedCourse.setClassroom(course.getClassroom());
-            }
-            if (course.getCourseStatus() != null) {
-                updatedCourse.setCourseStatus(course.getCourseStatus());
-            }
+        return courseRepository.findById(id).map(updatedCourse -> {
+            if (course.getName() != null) updatedCourse.setName(course.getName());
+            if (course.getLevelId() != null) updatedCourse.setLevelId(course.getLevelId());
+            if (course.getAcademicYearId() != null) updatedCourse.setAcademicYearId(course.getAcademicYearId());
+            if (course.getShiftId() != null) updatedCourse.setShiftId(course.getShiftId());
+            if (course.getHeadTeacherId() != null) updatedCourse.setHeadTeacherId(course.getHeadTeacherId());
+            if (course.getMaxCapacity() != null) updatedCourse.setMaxCapacity(course.getMaxCapacity());
+            if (course.getClassroom() != null) updatedCourse.setClassroom(course.getClassroom());
+            if (course.getCourseStatusId() != null) updatedCourse.setCourseStatusId(course.getCourseStatusId());
             return courseRepository.save(updatedCourse);
-        }
-        return null;
+        }).orElse(null);
     }
 
     @Override

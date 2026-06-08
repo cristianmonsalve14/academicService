@@ -20,23 +20,15 @@ public class Grade {
     @Column(nullable = false)
     private Long evaluationId;  // FK a evaluations
 
-    @Column(nullable = false)
-    private Long subjectId;  // FK a subjects
-
     // Calificación (escala chilena: 1.0 a 7.0, aprobación: 4.0)
     @Column(nullable = false, precision = 5, scale = 2)
     private BigDecimal score;  // 6.5 (escala 1.0 a 7.0)
 
-    @Column(precision = 5, scale = 2)
-    private BigDecimal percentage;  // 85.5% (score/maxScore * 100)
-
-    private String letterGrade;  // "MB" (Muy Bueno 6.0-7.0), "B" (Bueno 5.0-5.9), "S" (Suficiente 4.0-4.9), "I" (Insuficiente 1.0-3.9)
-
     @Column(nullable = false)
     private LocalDate gradeDate;
 
-    @Column(nullable = false)
-    private String gradeStatus;  // "DEFINITIVA", "PRELIMINAR", "EN_REVISION", "AUSENTE"
+    @Column(name = "grade_status_id", nullable = false)
+    private Short gradeStatusId = 1;
 
     @Column(length = 1000)
     private String teacherComments;
@@ -55,9 +47,7 @@ public class Grade {
     protected void onCreate() {
         createdAt = LocalDateTime.now();
         updatedAt = LocalDateTime.now();
-        if (gradeStatus == null) {
-            gradeStatus = "DEFINITIVA";
-        }
+        if (gradeStatusId == null) gradeStatusId = 1;
         if (isAbsent == null) {
             isAbsent = false;
         }
@@ -94,36 +84,12 @@ public class Grade {
         this.evaluationId = evaluationId;
     }
 
-    public Long getSubjectId() {
-        return subjectId;
-    }
-
-    public void setSubjectId(Long subjectId) {
-        this.subjectId = subjectId;
-    }
-
     public BigDecimal getScore() {
         return score;
     }
 
     public void setScore(BigDecimal score) {
         this.score = score;
-    }
-
-    public BigDecimal getPercentage() {
-        return percentage;
-    }
-
-    public void setPercentage(BigDecimal percentage) {
-        this.percentage = percentage;
-    }
-
-    public String getLetterGrade() {
-        return letterGrade;
-    }
-
-    public void setLetterGrade(String letterGrade) {
-        this.letterGrade = letterGrade;
     }
 
     public LocalDate getGradeDate() {
@@ -134,13 +100,8 @@ public class Grade {
         this.gradeDate = gradeDate;
     }
 
-    public String getGradeStatus() {
-        return gradeStatus;
-    }
-
-    public void setGradeStatus(String gradeStatus) {
-        this.gradeStatus = gradeStatus;
-    }
+    public Short getGradeStatusId() { return gradeStatusId; }
+    public void setGradeStatusId(Short gradeStatusId) { this.gradeStatusId = gradeStatusId; }
 
     public String getTeacherComments() {
         return teacherComments;

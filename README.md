@@ -48,7 +48,7 @@ spring.datasource.password=tu_password
 spring.jpa.hibernate.ddl-auto=update  
 spring.jpa.show-sql=true  
 
-server.port=8082  
+server.port=8092  
 
 jwt.secret=tuClaveSecretaParaJWT_MinimoDebeSerDe256Bits  
 
@@ -60,7 +60,7 @@ mvn clean spring-boot:run
 
 El servicio estará disponible en:
 
-http://localhost:8082  
+http://localhost:8092  
 
 ---
 

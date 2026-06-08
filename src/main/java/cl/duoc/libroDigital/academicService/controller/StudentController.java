@@ -1,6 +1,7 @@
 package cl.duoc.libroDigital.academicService.controller;
 
 import cl.duoc.libroDigital.academicService.model.Student;
+import cl.duoc.libroDigital.academicService.service.CatalogLookupService;
 import cl.duoc.libroDigital.academicService.service.StudentService;
 import cl.duoc.libroDigital.academicService.dto.StudentDTO;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,68 +16,56 @@ public class StudentController {
     @Autowired
     private StudentService studentService;
 
-    // ===== Mapper: Entity -> DTO =====
+    @Autowired
+    private CatalogLookupService catalogs;
+
     private StudentDTO toDTO(Student student) {
         StudentDTO dto = new StudentDTO();
-
         dto.setId(student.getId());
         dto.setRut(student.getRut());
-
         dto.setFirstName(student.getFirstName());
         dto.setSecondName(student.getSecondName());
         dto.setLastName(student.getLastName());
         dto.setMotherLastName(student.getMotherLastName());
-
         dto.setEmail(student.getEmail());
         dto.setPhone(student.getPhone());
         dto.setAddress(student.getAddress());
         dto.setCommune(student.getCommune());
         dto.setCity(student.getCity());
-
         dto.setDateOfBirth(student.getDateOfBirth());
         dto.setAdmissionDate(student.getAdmissionDate());
-
+        dto.setWithdrawalDate(student.getWithdrawalDate());
+        dto.setEnrollmentNumber(student.getEnrollmentNumber());
         dto.setGuardianId(student.getGuardianId());
         dto.setUserId(student.getUserId());
-
         dto.setCreatedAt(student.getCreatedAt());
         dto.setUpdatedAt(student.getUpdatedAt());
-
-        dto.setStudentStatus(student.getStudentStatus());
-
+        dto.setStudentStatus(catalogs.code("student_statuses", student.getStudentStatusId()));
         return dto;
     }
 
-    // ===== Mapper: DTO -> Entity =====
     private Student toEntity(StudentDTO dto) {
         Student student = new Student();
-
         student.setId(dto.getId());
         student.setRut(dto.getRut());
-
         student.setFirstName(dto.getFirstName());
         student.setSecondName(dto.getSecondName());
         student.setLastName(dto.getLastName());
         student.setMotherLastName(dto.getMotherLastName());
-
         student.setEmail(dto.getEmail());
         student.setPhone(dto.getPhone());
         student.setAddress(dto.getAddress());
         student.setCommune(dto.getCommune());
         student.setCity(dto.getCity());
-
         student.setDateOfBirth(dto.getDateOfBirth());
         student.setAdmissionDate(dto.getAdmissionDate());
-
+        student.setWithdrawalDate(dto.getWithdrawalDate());
+        student.setEnrollmentNumber(dto.getEnrollmentNumber());
         student.setGuardianId(dto.getGuardianId());
         student.setUserId(dto.getUserId());
-
-        student.setStudentStatus(dto.getStudentStatus());
-
+        student.setStudentStatusId(catalogs.requireId("student_statuses", dto.getStudentStatus()));
         return student;
     }
-
-    // ===== Endpoints =====
 
     @PostMapping
     public StudentDTO createStudent(@RequestBody StudentDTO dto) {
@@ -86,17 +75,12 @@ public class StudentController {
 
     @GetMapping
     public List<StudentDTO> getAllStudents() {
-        return studentService.getAllStudents()
-                .stream()
-                .map(this::toDTO)
-                .collect(Collectors.toList());
+        return studentService.getAllStudents().stream().map(this::toDTO).collect(Collectors.toList());
     }
 
     @GetMapping("/{id}")
     public StudentDTO getStudent(@PathVariable Long id) {
-        return studentService.getStudentById(id)
-                .map(this::toDTO)
-                .orElse(null);
+        return studentService.getStudentById(id).map(this::toDTO).orElse(null);
     }
 
     @PutMapping("/{id}")
@@ -110,4 +94,3 @@ public class StudentController {
         studentService.deleteStudent(id);
     }
 }
-

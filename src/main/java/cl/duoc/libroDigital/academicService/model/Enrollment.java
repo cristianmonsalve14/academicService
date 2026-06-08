@@ -23,11 +23,11 @@ public class Enrollment {
     @Column(name = "enrollment_date")
     private LocalDate enrollmentDate;
 
-    @Column(name = "academic_year")
-    private Integer academicYear;
+    @Column(name = "academic_year_id", nullable = false)
+    private Short academicYearId = 2;
 
-    @Column(name = "enrollment_status")
-    private String enrollmentStatus;
+    @Column(name = "enrollment_status_id", nullable = false)
+    private Short enrollmentStatusId = 1;
 
     @Column(name = "is_regular")
     private Boolean isRegular;
@@ -47,17 +47,9 @@ public class Enrollment {
         createdAt = LocalDateTime.now();
         updatedAt = LocalDateTime.now();
 
-        if (enrollmentStatus == null) {
-            enrollmentStatus = "ACTIVO";
-        }
-
-        if (enrollmentDate == null) {
-            enrollmentDate = LocalDate.now();
-        }
-
-        if (academicYear == null) {
-            academicYear = LocalDate.now().getYear();
-        }
+        if (enrollmentStatusId == null) enrollmentStatusId = 1;
+        if (enrollmentDate == null) enrollmentDate = LocalDate.now();
+        if (academicYearId == null) academicYearId = 2;
     }
 
     @PreUpdate
@@ -99,21 +91,10 @@ public class Enrollment {
         this.enrollmentDate = enrollmentDate;
     }
 
-    public Integer getAcademicYear() {
-        return academicYear;
-    }
-
-    public void setAcademicYear(Integer academicYear) {
-        this.academicYear = academicYear;
-    }
-
-    public String getEnrollmentStatus() {
-        return enrollmentStatus;
-    }
-
-    public void setEnrollmentStatus(String enrollmentStatus) {
-        this.enrollmentStatus = enrollmentStatus;
-    }
+    public Short getAcademicYearId() { return academicYearId; }
+    public void setAcademicYearId(Short academicYearId) { this.academicYearId = academicYearId; }
+    public Short getEnrollmentStatusId() { return enrollmentStatusId; }
+    public void setEnrollmentStatusId(Short enrollmentStatusId) { this.enrollmentStatusId = enrollmentStatusId; }
 
     public Boolean getIsRegular() {
         return isRegular;

@@ -2,6 +2,7 @@ package cl.duoc.libroDigital.academicService.service.impl;
 
 import cl.duoc.libroDigital.academicService.model.Student;
 import cl.duoc.libroDigital.academicService.repository.StudentRepository;
+import cl.duoc.libroDigital.academicService.service.CatalogLookupService;
 import cl.duoc.libroDigital.academicService.service.StudentService;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +16,9 @@ public class StudentServiceImpl implements StudentService {
 
     @Autowired
     private StudentRepository studentRepository;
+
+    @Autowired
+    private CatalogLookupService catalogs;
 
     @Override
     public Student createStudent(Student student) {
@@ -55,7 +59,7 @@ public class StudentServiceImpl implements StudentService {
 
             // Académico
             if (student.getEnrollmentNumber() != null) existingStudent.setEnrollmentNumber(student.getEnrollmentNumber());
-            if (student.getStudentStatus() != null) existingStudent.setStudentStatus(student.getStudentStatus());
+            if (student.getStudentStatusId() != null) existingStudent.setStudentStatusId(student.getStudentStatusId());
             if (student.getAdmissionDate() != null) existingStudent.setAdmissionDate(student.getAdmissionDate());
             if (student.getWithdrawalDate() != null) existingStudent.setWithdrawalDate(student.getWithdrawalDate());
 
@@ -87,6 +91,6 @@ public class StudentServiceImpl implements StudentService {
 
     @Override
     public List<Student> getStudentsByStatus(String studentStatus) {
-        return studentRepository.findByStudentStatus(studentStatus);
+        return studentRepository.findByStudentStatusId(catalogs.requireId("student_statuses", studentStatus));
     }
 }

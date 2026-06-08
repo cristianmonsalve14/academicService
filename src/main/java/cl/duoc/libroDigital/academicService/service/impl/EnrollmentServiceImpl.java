@@ -2,6 +2,7 @@ package cl.duoc.libroDigital.academicService.service.impl;
 
 import cl.duoc.libroDigital.academicService.model.Enrollment;
 import cl.duoc.libroDigital.academicService.repository.EnrollmentRepository;
+import cl.duoc.libroDigital.academicService.service.CatalogLookupService;
 import cl.duoc.libroDigital.academicService.service.EnrollmentService;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +16,9 @@ public class EnrollmentServiceImpl implements EnrollmentService {
 
     @Autowired
     private EnrollmentRepository enrollmentRepository;
+
+    @Autowired
+    private CatalogLookupService catalogs;
 
     @Override
     public Enrollment createEnrollment(Enrollment enrollment) {
@@ -48,13 +52,8 @@ public class EnrollmentServiceImpl implements EnrollmentService {
                 existing.setEnrollmentDate(enrollment.getEnrollmentDate());
             }
 
-            if (enrollment.getAcademicYear() != null) {
-                existing.setAcademicYear(enrollment.getAcademicYear());
-            }
-
-            if (enrollment.getEnrollmentStatus() != null) {
-                existing.setEnrollmentStatus(enrollment.getEnrollmentStatus());
-            }
+            if (enrollment.getAcademicYearId() != null) existing.setAcademicYearId(enrollment.getAcademicYearId());
+            if (enrollment.getEnrollmentStatusId() != null) existing.setEnrollmentStatusId(enrollment.getEnrollmentStatusId());
 
             if (enrollment.getIsRegular() != null) {
                 existing.setIsRegular(enrollment.getIsRegular());
@@ -90,6 +89,6 @@ public class EnrollmentServiceImpl implements EnrollmentService {
 
     @Override
     public List<Enrollment> getEnrollmentsByStatus(String enrollmentStatus) {
-        return enrollmentRepository.findByEnrollmentStatus(enrollmentStatus);
+        return enrollmentRepository.findByEnrollmentStatusId(catalogs.requireId("enrollment_statuses", enrollmentStatus));
     }
 }

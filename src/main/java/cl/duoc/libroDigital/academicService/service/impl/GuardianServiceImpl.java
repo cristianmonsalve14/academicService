@@ -67,9 +67,7 @@ public class GuardianServiceImpl implements GuardianService {
             if (guardian.getCity() != null) {
                 updatedGuardian.setCity(guardian.getCity());
             }
-            if (guardian.getRelationship() != null) {
-                updatedGuardian.setRelationship(guardian.getRelationship());
-            }
+            if (guardian.getRelationshipId() != null) updatedGuardian.setRelationshipId(guardian.getRelationshipId());
             if (guardian.getOccupation() != null) {
                 updatedGuardian.setOccupation(guardian.getOccupation());
             }

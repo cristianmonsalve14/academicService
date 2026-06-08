@@ -2,6 +2,7 @@ package cl.duoc.libroDigital.academicService.service.impl;
 
 import cl.duoc.libroDigital.academicService.model.Teacher;
 import cl.duoc.libroDigital.academicService.repository.TeacherRepository;
+import cl.duoc.libroDigital.academicService.service.CatalogLookupService;
 import cl.duoc.libroDigital.academicService.service.TeacherService;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +16,9 @@ public class TeacherServiceImpl implements TeacherService {
 
     @Autowired
     private TeacherRepository teacherRepository;
+
+    @Autowired
+    private CatalogLookupService catalogs;
 
     @Override
     public Teacher createTeacher(Teacher teacher) {
@@ -88,13 +92,8 @@ public class TeacherServiceImpl implements TeacherService {
                 existing.setHireDate(teacher.getHireDate());
             }
 
-            if (teacher.getContractType() != null) {
-                existing.setContractType(teacher.getContractType());
-            }
-
-            if (teacher.getTeacherStatus() != null) {
-                existing.setTeacherStatus(teacher.getTeacherStatus());
-            }
+            if (teacher.getContractTypeId() != null) existing.setContractTypeId(teacher.getContractTypeId());
+            if (teacher.getTeacherStatusId() != null) existing.setTeacherStatusId(teacher.getTeacherStatusId());
 
             return teacherRepository.save(existing);
 
@@ -122,6 +121,6 @@ public class TeacherServiceImpl implements TeacherService {
 
     @Override
     public List<Teacher> getTeachersByStatus(String teacherStatus) {
-        return teacherRepository.findByTeacherStatus(teacherStatus);
+        return teacherRepository.findByTeacherStatusId(catalogs.requireId("teacher_statuses", teacherStatus));
     }
 }

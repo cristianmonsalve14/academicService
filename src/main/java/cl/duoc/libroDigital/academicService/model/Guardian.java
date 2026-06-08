@@ -39,8 +39,8 @@ public class Guardian {
     private String city;
 
     // Relación con estudiante
-    @Column(nullable = false)
-    private String relationship;  // "PADRE", "MADRE", "ABUELO", "ABUELA", "TIO", "TIA", "TUTOR"
+    @Column(name = "relationship_id", nullable = false)
+    private Short relationshipId = 1;
 
     // Información laboral
     private String occupation;
@@ -166,13 +166,8 @@ public class Guardian {
         this.city = city;
     }
 
-    public String getRelationship() {
-        return relationship;
-    }
-
-    public void setRelationship(String relationship) {
-        this.relationship = relationship;
-    }
+    public Short getRelationshipId() { return relationshipId; }
+    public void setRelationshipId(Short relationshipId) { this.relationshipId = relationshipId; }
 
     public String getOccupation() {
         return occupation;

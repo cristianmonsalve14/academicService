@@ -48,9 +48,7 @@ public class SubjectServiceImpl implements SubjectService {
                 existingSubject.setDescription(subject.getDescription());
             }
 
-            if (subject.getSubjectType() != null) {
-                existingSubject.setSubjectType(subject.getSubjectType());
-            }
+            if (subject.getSubjectTypeId() != null) existingSubject.setSubjectTypeId(subject.getSubjectTypeId());
 
             if (subject.getWeeklyHours() != null) {
                 existingSubject.setWeeklyHours(subject.getWeeklyHours());

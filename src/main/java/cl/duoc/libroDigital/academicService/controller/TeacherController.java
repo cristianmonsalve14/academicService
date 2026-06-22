@@ -2,9 +2,10 @@ package cl.duoc.libroDigital.academicService.controller;
 
 import cl.duoc.libroDigital.academicService.model.Teacher;
 import cl.duoc.libroDigital.academicService.dto.TeacherDTO;
+import cl.duoc.libroDigital.academicService.service.CatalogLookupService;
 import cl.duoc.libroDigital.academicService.service.TeacherService;
+import cl.duoc.libroDigital.academicService.security.AcademicAccessService;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -14,98 +15,105 @@ import java.util.stream.Collectors;
 @RequestMapping("/teachers")
 public class TeacherController {
 
-    @Autowired
-    private TeacherService teacherService;
+    private final TeacherService teacherService;
+    private final CatalogLookupService catalogs;
+    private final AcademicAccessService access;
 
-    // ===== Mapper: Entity -> DTO =====
+    public TeacherController(
+            TeacherService teacherService,
+            CatalogLookupService catalogs,
+            AcademicAccessService access) {
+        this.teacherService = teacherService;
+        this.catalogs = catalogs;
+        this.access = access;
+    }
+
     private TeacherDTO toDTO(Teacher teacher) {
         TeacherDTO dto = new TeacherDTO();
-
         dto.setId(teacher.getId());
         dto.setRut(teacher.getRut());
         dto.setFirstName(teacher.getFirstName());
         dto.setLastName(teacher.getLastName());
         dto.setSecondLastName(teacher.getSecondLastName());
-
         dto.setEmail(teacher.getEmail());
         dto.setPhone(teacher.getPhone());
         dto.setAddress(teacher.getAddress());
         dto.setCommune(teacher.getCommune());
         dto.setCity(teacher.getCity());
-
         dto.setEmployeeNumber(teacher.getEmployeeNumber());
         dto.setSpecialization(teacher.getSpecialization());
         dto.setEducationLevel(teacher.getEducationLevel());
         dto.setHireDate(teacher.getHireDate());
-        dto.setContractType(teacher.getContractType());
-        dto.setTeacherStatus(teacher.getTeacherStatus());
-
+        dto.setContractType(catalogs.code("contract_types", teacher.getContractTypeId()));
+        dto.setTeacherStatus(catalogs.code("teacher_statuses", teacher.getTeacherStatusId()));
+        dto.setUserId(teacher.getUserId());
         dto.setCreatedAt(teacher.getCreatedAt());
         dto.setUpdatedAt(teacher.getUpdatedAt());
-
         return dto;
     }
 
-    // ===== Mapper: DTO -> Entity =====
     private Teacher toEntity(TeacherDTO dto) {
         Teacher teacher = new Teacher();
-
         teacher.setId(dto.getId());
         teacher.setRut(dto.getRut());
         teacher.setFirstName(dto.getFirstName());
         teacher.setLastName(dto.getLastName());
         teacher.setSecondLastName(dto.getSecondLastName());
-
         teacher.setEmail(dto.getEmail());
         teacher.setPhone(dto.getPhone());
         teacher.setAddress(dto.getAddress());
         teacher.setCommune(dto.getCommune());
         teacher.setCity(dto.getCity());
-
         teacher.setEmployeeNumber(dto.getEmployeeNumber());
         teacher.setSpecialization(dto.getSpecialization());
         teacher.setEducationLevel(dto.getEducationLevel());
         teacher.setHireDate(dto.getHireDate());
-        teacher.setContractType(dto.getContractType());
-        teacher.setTeacherStatus(dto.getTeacherStatus());
-
+        if (dto.getContractType() != null && !dto.getContractType().isBlank()) {
+            teacher.setContractTypeId(catalogs.requireId("contract_types", dto.getContractType()));
+        }
+        teacher.setTeacherStatusId(catalogs.requireId("teacher_statuses", dto.getTeacherStatus()));
+        teacher.setUserId(dto.getUserId());
         return teacher;
     }
 
-    // ===== Crear =====
     @PostMapping
     public TeacherDTO createTeacher(@RequestBody TeacherDTO dto) {
-        Teacher created = teacherService.createTeacher(toEntity(dto));
-        return toDTO(created);
+        access.requireAdmin();
+        return toDTO(teacherService.createTeacher(toEntity(dto)));
     }
 
-    // ===== Listar =====
-    @GetMapping
-    public List<TeacherDTO> getAllTeachers() {
-        return teacherService.getAllTeachers()
-                .stream()
-                .map(this::toDTO)
-                .collect(Collectors.toList());
-    }
-
-    // ===== Obtener por ID =====
-    @GetMapping("/{id}")
-    public TeacherDTO getTeacherById(@PathVariable Long id) {
-        return teacherService.getTeacherById(id)
+    @GetMapping("/me")
+    public TeacherDTO getCurrentTeacher() {
+        return access.currentTeacher()
                 .map(this::toDTO)
                 .orElse(null);
     }
 
-    // ===== Actualizar =====
-    @PutMapping("/{id}")
-    public TeacherDTO updateTeacher(@PathVariable Long id, @RequestBody TeacherDTO dto) {
-        Teacher updated = teacherService.updateTeacher(id, toEntity(dto));
-        return toDTO(updated);
+    @GetMapping
+    public List<TeacherDTO> getAllTeachers() {
+        if (access.isAdmin()) {
+            return teacherService.getAllTeachers().stream().map(this::toDTO).collect(Collectors.toList());
+        }
+        return access.currentTeacher()
+                .map(teacher -> List.of(toDTO(teacher)))
+                .orElse(List.of());
     }
 
-    // ===== Eliminar =====
+    @GetMapping("/{id}")
+    public TeacherDTO getTeacherById(@PathVariable Long id) {
+        access.ensureCanReadTeacher(id);
+        return teacherService.getTeacherById(id).map(this::toDTO).orElse(null);
+    }
+
+    @PutMapping("/{id}")
+    public TeacherDTO updateTeacher(@PathVariable Long id, @RequestBody TeacherDTO dto) {
+        access.requireAdmin();
+        return toDTO(teacherService.updateTeacher(id, toEntity(dto)));
+    }
+
     @DeleteMapping("/{id}")
     public void deleteTeacher(@PathVariable Long id) {
+        access.requireAdmin();
         teacherService.deleteTeacher(id);
     }
 }

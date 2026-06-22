@@ -47,8 +47,8 @@ public class Student {
 
 
 
-    @Column(name = "student_status")
-    private String studentStatus;
+    @Column(name = "student_status_id", nullable = false)
+    private Short studentStatusId = 1;
 
     @Column(name = "admission_date")
     private LocalDate admissionDate;
@@ -67,6 +67,9 @@ public class Student {
     @PrePersist
     protected void onCreate() {
         createdAt = LocalDateTime.now();
+        if (studentStatusId == null) {
+            studentStatusId = 1;
+        }
     }
 
     @PreUpdate
@@ -125,8 +128,8 @@ public class Student {
 
 
 
-    public String getStudentStatus() { return studentStatus; }
-    public void setStudentStatus(String studentStatus) { this.studentStatus = studentStatus; }
+    public Short getStudentStatusId() { return studentStatusId; }
+    public void setStudentStatusId(Short studentStatusId) { this.studentStatusId = studentStatusId; }
 
     public LocalDate getAdmissionDate() { return admissionDate; }
     public void setAdmissionDate(LocalDate admissionDate) { this.admissionDate = admissionDate; }

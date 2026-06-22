@@ -49,11 +49,17 @@ public class Teacher {
     @Column(name = "hire_date")
     private LocalDate hireDate;
 
-    @Column(name = "contract_type")
-    private String contractType;
+    @Column(name = "contract_type_id")
+    private Short contractTypeId;
 
-    @Column(name = "teacher_status", nullable = false)
-    private String teacherStatus = "ACTIVO";
+    @Column(name = "teacher_status_id", nullable = false)
+    private Short teacherStatusId = 1;
+
+    @Column(name = "auth_username", unique = true)
+    private String authUsername;
+
+    @Column(name = "user_id", unique = true)
+    private Long userId;
 
     // ===== AUDITORÍA =====
     @Column(name = "created_at", updatable = false)
@@ -67,6 +73,7 @@ public class Teacher {
     protected void onCreate() {
         createdAt = LocalDateTime.now();
         updatedAt = LocalDateTime.now();
+        if (teacherStatusId == null) teacherStatusId = 1;
     }
 
     @PreUpdate
@@ -188,20 +195,25 @@ public class Teacher {
         this.hireDate = hireDate;
     }
 
-    public String getContractType() {
-        return contractType;
+    public Short getContractTypeId() { return contractTypeId; }
+    public void setContractTypeId(Short contractTypeId) { this.contractTypeId = contractTypeId; }
+    public Short getTeacherStatusId() { return teacherStatusId; }
+    public void setTeacherStatusId(Short teacherStatusId) { this.teacherStatusId = teacherStatusId; }
+
+    public String getAuthUsername() {
+        return authUsername;
     }
 
-    public void setContractType(String contractType) {
-        this.contractType = contractType;
+    public void setAuthUsername(String authUsername) {
+        this.authUsername = authUsername;
     }
 
-    public String getTeacherStatus() {
-        return teacherStatus;
+    public Long getUserId() {
+        return userId;
     }
 
-    public void setTeacherStatus(String teacherStatus) {
-        this.teacherStatus = teacherStatus;
+    public void setUserId(Long userId) {
+        this.userId = userId;
     }
 
     public LocalDateTime getCreatedAt() {

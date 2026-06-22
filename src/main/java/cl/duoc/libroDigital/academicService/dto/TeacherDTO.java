@@ -28,6 +28,8 @@ public class TeacherDTO {
     private String contractType;
     private String teacherStatus;
 
+    private Long userId;
+
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
@@ -161,6 +163,14 @@ public class TeacherDTO {
 
     public void setTeacherStatus(String teacherStatus) {
         this.teacherStatus = teacherStatus;
+    }
+
+    public Long getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Long userId) {
+        this.userId = userId;
     }
 
     public LocalDateTime getCreatedAt() {

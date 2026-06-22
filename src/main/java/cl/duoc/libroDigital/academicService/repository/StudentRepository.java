@@ -12,6 +12,12 @@ public interface StudentRepository extends JpaRepository<Student, Long> {
 
     Optional<Student> findByEmail(String email);
 
-    List<Student> findByStudentStatus(String studentStatus);
+    List<Student> findByStudentStatusId(Short studentStatusId);
+
+    Optional<Student> findByUserId(Long userId);
+
+    List<Student> findByGuardianId(Long guardianId);
+
+    Optional<Student> findByEmailIgnoreCase(String email);
 }
 

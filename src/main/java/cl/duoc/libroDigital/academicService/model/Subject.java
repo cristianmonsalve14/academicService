@@ -19,8 +19,8 @@ public class Subject {
 
     private String description;
 
-    @Column(name = "subject_type")
-    private String subjectType;
+    @Column(name = "subject_type_id")
+    private Short subjectTypeId;
 
     @Column(name = "weekly_hours")
     private Integer weeklyHours;
@@ -73,13 +73,8 @@ public class Subject {
         this.description = description;
     }
 
-    public String getSubjectType() {
-        return subjectType;
-    }
-
-    public void setSubjectType(String subjectType) {
-        this.subjectType = subjectType;
-    }
+    public Short getSubjectTypeId() { return subjectTypeId; }
+    public void setSubjectTypeId(Short subjectTypeId) { this.subjectTypeId = subjectTypeId; }
 
     public Integer getWeeklyHours() {
         return weeklyHours;

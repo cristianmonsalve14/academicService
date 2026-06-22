@@ -10,4 +10,8 @@ public interface GuardianRepository extends JpaRepository<Guardian, Long> {
     Optional<Guardian> findByRut(String rut);
     
     Optional<Guardian> findByEmail(String email);
+
+    Optional<Guardian> findByUserId(Long userId);
+
+    Optional<Guardian> findByEmailIgnoreCase(String email);
 }

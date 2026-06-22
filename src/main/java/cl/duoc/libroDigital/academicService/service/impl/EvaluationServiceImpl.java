@@ -1,11 +1,12 @@
 package cl.duoc.libroDigital.academicService.service.impl;
 
+import cl.duoc.libroDigital.academicService.exception.NotFoundException;
 import cl.duoc.libroDigital.academicService.model.Evaluation;
 import cl.duoc.libroDigital.academicService.repository.EvaluationRepository;
 import cl.duoc.libroDigital.academicService.service.CatalogLookupService;
 import cl.duoc.libroDigital.academicService.service.EvaluationService;
+import cl.duoc.libroDigital.academicService.validation.AcademicEntityValidator;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -14,14 +15,22 @@ import java.util.Optional;
 @Service
 public class EvaluationServiceImpl implements EvaluationService {
 
-    @Autowired
-    private EvaluationRepository evaluationRepository;
+    private final EvaluationRepository evaluationRepository;
+    private final CatalogLookupService catalogs;
+    private final AcademicEntityValidator validator;
 
-    @Autowired
-    private CatalogLookupService catalogs;
+    public EvaluationServiceImpl(
+            EvaluationRepository evaluationRepository,
+            CatalogLookupService catalogs,
+            AcademicEntityValidator validator) {
+        this.evaluationRepository = evaluationRepository;
+        this.catalogs = catalogs;
+        this.validator = validator;
+    }
 
     @Override
     public Evaluation createEvaluation(Evaluation evaluation) {
+        validator.validateEvaluationForSave(evaluation, null);
         return evaluationRepository.save(evaluation);
     }
 
@@ -46,8 +55,10 @@ public class EvaluationServiceImpl implements EvaluationService {
             if (evaluation.getMaxScore() != null) existing.setMaxScore(evaluation.getMaxScore());
             if (evaluation.getWeight() != null) existing.setWeight(evaluation.getWeight());
             if (evaluation.getDescription() != null) existing.setDescription(evaluation.getDescription());
+
+            validator.validateEvaluationForSave(existing, id);
             return evaluationRepository.save(existing);
-        }).orElseThrow(() -> new RuntimeException("Evaluación no encontrada con id " + id));
+        }).orElseThrow(() -> new NotFoundException("Evaluación no encontrada con id " + id));
     }
 
     @Override

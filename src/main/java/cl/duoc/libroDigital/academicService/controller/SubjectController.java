@@ -4,8 +4,8 @@ import cl.duoc.libroDigital.academicService.model.Subject;
 import cl.duoc.libroDigital.academicService.service.CatalogLookupService;
 import cl.duoc.libroDigital.academicService.service.SubjectService;
 import cl.duoc.libroDigital.academicService.dto.SubjectDTO;
+import cl.duoc.libroDigital.academicService.security.AcademicAccessService;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -15,11 +15,18 @@ import java.util.stream.Collectors;
 @RequestMapping("/subjects")
 public class SubjectController {
 
-    @Autowired
-    private SubjectService subjectService;
+    private final SubjectService subjectService;
+    private final CatalogLookupService catalogs;
+    private final AcademicAccessService access;
 
-    @Autowired
-    private CatalogLookupService catalogs;
+    public SubjectController(
+            SubjectService subjectService,
+            CatalogLookupService catalogs,
+            AcademicAccessService access) {
+        this.subjectService = subjectService;
+        this.catalogs = catalogs;
+        this.access = access;
+    }
 
     private SubjectDTO toDTO(Subject subject) {
         SubjectDTO dto = new SubjectDTO();
@@ -55,26 +62,36 @@ public class SubjectController {
 
     @PostMapping
     public SubjectDTO createSubject(@RequestBody SubjectDTO dto) {
+        access.requireAdmin();
         return toDTO(subjectService.createSubject(toEntity(dto)));
     }
 
     @GetMapping
     public List<SubjectDTO> getAllSubjects() {
-        return subjectService.getAllSubjects().stream().map(this::toDTO).collect(Collectors.toList());
+        if (access.isAdmin()) {
+            return subjectService.getAllSubjects().stream().map(this::toDTO).collect(Collectors.toList());
+        }
+        Long teacherId = access.requireTeacherId();
+        return subjectService.getSubjectsByTeacher(teacherId).stream()
+                .map(this::toDTO)
+                .collect(Collectors.toList());
     }
 
     @GetMapping("/{id}")
     public SubjectDTO getSubject(@PathVariable Long id) {
+        access.ensureCanReadSubject(id);
         return subjectService.getSubjectById(id).map(this::toDTO).orElse(null);
     }
 
     @PutMapping("/{id}")
     public SubjectDTO updateSubject(@PathVariable Long id, @RequestBody SubjectDTO dto) {
+        access.requireAdmin();
         return toDTO(subjectService.updateSubject(id, toEntity(dto)));
     }
 
     @DeleteMapping("/{id}")
     public void deleteSubject(@PathVariable Long id) {
+        access.requireAdmin();
         subjectService.deleteSubject(id);
     }
 }

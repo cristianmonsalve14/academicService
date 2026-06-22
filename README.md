@@ -21,7 +21,7 @@ Este microservicio sigue una arquitectura por capas:
 ## ⚙️ Stack Tecnológico
 
 - Java 21  
-- Spring Boot 4.0.5  
+- Spring Boot 4.1.0  
 - Spring Web  
 - Spring Data JPA  
 - Spring Security  

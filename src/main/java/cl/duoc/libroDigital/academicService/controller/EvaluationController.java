@@ -5,8 +5,8 @@ import cl.duoc.libroDigital.academicService.dto.EvaluationDTO;
 import cl.duoc.libroDigital.academicService.repository.SubjectRepository;
 import cl.duoc.libroDigital.academicService.service.CatalogLookupService;
 import cl.duoc.libroDigital.academicService.service.EvaluationService;
+import cl.duoc.libroDigital.academicService.security.AcademicAccessService;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -16,14 +16,21 @@ import java.util.stream.Collectors;
 @RequestMapping("/evaluations")
 public class EvaluationController {
 
-    @Autowired
-    private EvaluationService evaluationService;
+    private final EvaluationService evaluationService;
+    private final SubjectRepository subjectRepository;
+    private final CatalogLookupService catalogs;
+    private final AcademicAccessService access;
 
-    @Autowired
-    private SubjectRepository subjectRepository;
-
-    @Autowired
-    private CatalogLookupService catalogs;
+    public EvaluationController(
+            EvaluationService evaluationService,
+            SubjectRepository subjectRepository,
+            CatalogLookupService catalogs,
+            AcademicAccessService access) {
+        this.evaluationService = evaluationService;
+        this.subjectRepository = subjectRepository;
+        this.catalogs = catalogs;
+        this.access = access;
+    }
 
     private EvaluationDTO toDTO(Evaluation e) {
         EvaluationDTO dto = new EvaluationDTO();
@@ -61,28 +68,44 @@ public class EvaluationController {
 
     @PostMapping
     public EvaluationDTO createEvaluation(@RequestBody EvaluationDTO dto) {
+        access.ensureCanManageEvaluationSubject(dto.getSubjectId());
         Evaluation created = evaluationService.createEvaluation(toEntity(dto));
         return toDTO(created);
     }
 
     @GetMapping
     public List<EvaluationDTO> getAllEvaluations() {
-        return evaluationService.getAllEvaluations().stream().map(this::toDTO).collect(Collectors.toList());
+        if (access.isAdmin()) {
+            return evaluationService.getAllEvaluations().stream().map(this::toDTO).collect(Collectors.toList());
+        }
+        Long teacherId = access.requireTeacherId();
+        List<Long> subjectIds = access.teacherSubjectIds(teacherId);
+        return evaluationService.getAllEvaluations().stream()
+                .filter(e -> e.getSubjectId() != null && subjectIds.contains(e.getSubjectId()))
+                .map(this::toDTO)
+                .collect(Collectors.toList());
     }
 
     @GetMapping("/{id}")
     public EvaluationDTO getEvaluation(@PathVariable Long id) {
-        return evaluationService.getEvaluationById(id).map(this::toDTO).orElse(null);
+        Evaluation evaluation = evaluationService.getEvaluationById(id).orElse(null);
+        if (evaluation == null) {
+            return null;
+        }
+        access.ensureCanReadSubject(evaluation.getSubjectId());
+        return toDTO(evaluation);
     }
 
     @PutMapping("/{id}")
     public EvaluationDTO updateEvaluation(@PathVariable Long id, @RequestBody EvaluationDTO dto) {
+        access.ensureCanManageEvaluation(id);
         Evaluation updated = evaluationService.updateEvaluation(id, toEntity(dto));
         return toDTO(updated);
     }
 
     @DeleteMapping("/{id}")
     public void deleteEvaluation(@PathVariable Long id) {
+        access.ensureCanManageEvaluation(id);
         evaluationService.deleteEvaluation(id);
     }
 }

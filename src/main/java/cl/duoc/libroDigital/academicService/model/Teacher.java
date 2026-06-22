@@ -55,6 +55,12 @@ public class Teacher {
     @Column(name = "teacher_status_id", nullable = false)
     private Short teacherStatusId = 1;
 
+    @Column(name = "auth_username", unique = true)
+    private String authUsername;
+
+    @Column(name = "user_id", unique = true)
+    private Long userId;
+
     // ===== AUDITORÍA =====
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
@@ -193,6 +199,22 @@ public class Teacher {
     public void setContractTypeId(Short contractTypeId) { this.contractTypeId = contractTypeId; }
     public Short getTeacherStatusId() { return teacherStatusId; }
     public void setTeacherStatusId(Short teacherStatusId) { this.teacherStatusId = teacherStatusId; }
+
+    public String getAuthUsername() {
+        return authUsername;
+    }
+
+    public void setAuthUsername(String authUsername) {
+        this.authUsername = authUsername;
+    }
+
+    public Long getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Long userId) {
+        this.userId = userId;
+    }
 
     public LocalDateTime getCreatedAt() {
         return createdAt;

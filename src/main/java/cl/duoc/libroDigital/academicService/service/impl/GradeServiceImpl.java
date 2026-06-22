@@ -1,11 +1,11 @@
 package cl.duoc.libroDigital.academicService.service.impl;
 
+import cl.duoc.libroDigital.academicService.exception.NotFoundException;
 import cl.duoc.libroDigital.academicService.model.Grade;
 import cl.duoc.libroDigital.academicService.repository.GradeRepository;
-import cl.duoc.libroDigital.academicService.service.CatalogLookupService;
 import cl.duoc.libroDigital.academicService.service.GradeService;
+import cl.duoc.libroDigital.academicService.validation.AcademicEntityValidator;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -14,17 +14,17 @@ import java.util.Optional;
 @Service
 public class GradeServiceImpl implements GradeService {
 
-    @Autowired
-    private GradeRepository gradeRepository;
+    private final GradeRepository gradeRepository;
+    private final AcademicEntityValidator validator;
 
-    @Autowired
-    private CatalogLookupService catalogs;
+    public GradeServiceImpl(GradeRepository gradeRepository, AcademicEntityValidator validator) {
+        this.gradeRepository = gradeRepository;
+        this.validator = validator;
+    }
 
     @Override
     public Grade createGrade(Grade grade) {
-        if (grade.getGradeStatusId() == null) {
-            grade.setGradeStatusId(catalogs.requireId("grade_statuses", "DEFINITIVA"));
-        }
+        validator.validateGradeForSave(grade, null);
         return gradeRepository.save(grade);
     }
 
@@ -49,8 +49,10 @@ public class GradeServiceImpl implements GradeService {
             if (grade.getTeacherComments() != null) existing.setTeacherComments(grade.getTeacherComments());
             if (grade.getIsAbsent() != null) existing.setIsAbsent(grade.getIsAbsent());
             if (grade.getGradedByTeacherId() != null) existing.setGradedByTeacherId(grade.getGradedByTeacherId());
+
+            validator.validateGradeForSave(existing, id);
             return gradeRepository.save(existing);
-        }).orElse(null);
+        }).orElseThrow(() -> new NotFoundException("Nota no encontrada con id " + id));
     }
 
     @Override

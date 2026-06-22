@@ -16,4 +16,8 @@ public interface TeacherRepository extends JpaRepository<Teacher, Long> {
 
     // Buscar profesores por estado
     List<Teacher> findByTeacherStatusId(Short teacherStatusId);
+
+    Optional<Teacher> findByAuthUsername(String authUsername);
+
+    Optional<Teacher> findByUserId(Long userId);
 }

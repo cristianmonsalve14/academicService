@@ -9,6 +9,7 @@ public class EnrollmentDTO {
 
     private Long studentId;
     private Long courseId;
+    private String enrollmentNumber;
 
     private LocalDate enrollmentDate;
     private Integer academicYear;
@@ -47,6 +48,14 @@ public class EnrollmentDTO {
 
     public void setCourseId(Long courseId) {
         this.courseId = courseId;
+    }
+
+    public String getEnrollmentNumber() {
+        return enrollmentNumber;
+    }
+
+    public void setEnrollmentNumber(String enrollmentNumber) {
+        this.enrollmentNumber = enrollmentNumber;
     }
 
     public LocalDate getEnrollmentDate() {

@@ -1,11 +1,14 @@
 package cl.duoc.libroDigital.academicService.controller;
 
 import cl.duoc.libroDigital.academicService.dto.GuardianDTO;
+import cl.duoc.libroDigital.academicService.dto.StudentDTO;
 import cl.duoc.libroDigital.academicService.model.Guardian;
+import cl.duoc.libroDigital.academicService.model.Student;
+import cl.duoc.libroDigital.academicService.repository.StudentRepository;
 import cl.duoc.libroDigital.academicService.service.CatalogLookupService;
 import cl.duoc.libroDigital.academicService.service.GuardianService;
+import cl.duoc.libroDigital.academicService.security.AcademicAccessService;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -15,11 +18,21 @@ import java.util.List;
 @RequestMapping("/guardians")
 public class GuardianController {
 
-    @Autowired
-    private GuardianService guardianService;
+    private final GuardianService guardianService;
+    private final CatalogLookupService catalogs;
+    private final AcademicAccessService access;
+    private final StudentRepository studentRepository;
 
-    @Autowired
-    private CatalogLookupService catalogs;
+    public GuardianController(
+            GuardianService guardianService,
+            CatalogLookupService catalogs,
+            AcademicAccessService access,
+            StudentRepository studentRepository) {
+        this.guardianService = guardianService;
+        this.catalogs = catalogs;
+        this.access = access;
+        this.studentRepository = studentRepository;
+    }
 
     private GuardianDTO toDTO(Guardian guardian) {
         GuardianDTO dto = new GuardianDTO();
@@ -45,6 +58,21 @@ public class GuardianController {
         return dto;
     }
 
+    private StudentDTO toStudentDTO(Student student) {
+        StudentDTO dto = new StudentDTO();
+        dto.setId(student.getId());
+        dto.setRut(student.getRut());
+        dto.setFirstName(student.getFirstName());
+        dto.setSecondName(student.getSecondName());
+        dto.setLastName(student.getLastName());
+        dto.setMotherLastName(student.getMotherLastName());
+        dto.setEmail(student.getEmail());
+        dto.setEnrollmentNumber(student.getEnrollmentNumber());
+        dto.setGuardianId(student.getGuardianId());
+        dto.setStudentStatus(catalogs.code("student_statuses", student.getStudentStatusId()));
+        return dto;
+    }
+
     private Guardian toEntity(GuardianDTO dto) {
         Guardian guardian = new Guardian();
         guardian.setId(dto.getId());
@@ -67,18 +95,37 @@ public class GuardianController {
         return guardian;
     }
 
+    @GetMapping("/me")
+    public ResponseEntity<GuardianDTO> getCurrentGuardian() {
+        return access.currentGuardian()
+                .map(guardian -> ResponseEntity.ok(toDTO(guardian)))
+                .orElse(ResponseEntity.notFound().build());
+    }
+
+    @GetMapping("/me/students")
+    public ResponseEntity<List<StudentDTO>> getMyStudents() {
+        Long guardianId = access.requireGuardianId();
+        List<StudentDTO> students = studentRepository.findByGuardianId(guardianId).stream()
+                .map(this::toStudentDTO)
+                .toList();
+        return ResponseEntity.ok(students);
+    }
+
     @PostMapping
     public ResponseEntity<GuardianDTO> createGuardian(@RequestBody GuardianDTO dto) {
+        access.requireAdmin();
         return ResponseEntity.ok(toDTO(guardianService.createGuardian(toEntity(dto))));
     }
 
     @GetMapping
     public ResponseEntity<List<GuardianDTO>> getAllGuardians() {
+        access.requireAdmin();
         return ResponseEntity.ok(guardianService.getAllGuardians().stream().map(this::toDTO).toList());
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<GuardianDTO> getGuardianById(@PathVariable Long id) {
+        access.requireAdmin();
         return guardianService.getGuardianById(id)
                 .map(g -> ResponseEntity.ok(toDTO(g)))
                 .orElse(ResponseEntity.notFound().build());
@@ -86,6 +133,7 @@ public class GuardianController {
 
     @PutMapping("/{id}")
     public ResponseEntity<GuardianDTO> updateGuardian(@PathVariable Long id, @RequestBody GuardianDTO dto) {
+        access.requireAdmin();
         Guardian updated = guardianService.updateGuardian(id, toEntity(dto));
         if (updated != null) {
             return ResponseEntity.ok(toDTO(updated));
@@ -95,6 +143,7 @@ public class GuardianController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteGuardian(@PathVariable Long id) {
+        access.requireAdmin();
         guardianService.deleteGuardian(id);
         return ResponseEntity.noContent().build();
     }

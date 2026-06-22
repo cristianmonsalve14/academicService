@@ -15,6 +15,10 @@ public class GradeDTO {
     private String teacherComments;
     private Boolean isAbsent;
     private Long gradedByTeacherId;
+    private String studentName;
+    private String evaluationName;
+    private String subjectName;
+    private String gradedByTeacherName;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
@@ -38,6 +42,14 @@ public class GradeDTO {
     public void setIsAbsent(Boolean isAbsent) { this.isAbsent = isAbsent; }
     public Long getGradedByTeacherId() { return gradedByTeacherId; }
     public void setGradedByTeacherId(Long gradedByTeacherId) { this.gradedByTeacherId = gradedByTeacherId; }
+    public String getStudentName() { return studentName; }
+    public void setStudentName(String studentName) { this.studentName = studentName; }
+    public String getEvaluationName() { return evaluationName; }
+    public void setEvaluationName(String evaluationName) { this.evaluationName = evaluationName; }
+    public String getSubjectName() { return subjectName; }
+    public void setSubjectName(String subjectName) { this.subjectName = subjectName; }
+    public String getGradedByTeacherName() { return gradedByTeacherName; }
+    public void setGradedByTeacherName(String gradedByTeacherName) { this.gradedByTeacherName = gradedByTeacherName; }
     public LocalDateTime getCreatedAt() { return createdAt; }
     public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
     public LocalDateTime getUpdatedAt() { return updatedAt; }

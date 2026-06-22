@@ -35,7 +35,6 @@ public class CatalogLookupService {
         load("academic_years", "AcademicYear");
     }
 
-    @SuppressWarnings("unchecked")
     private void load(String table, String entity) {
         List<Object[]> rows = em.createQuery(
                 "SELECT c.id, c.code FROM cl.duoc.libroDigital.academicService.model.catalog." + entity + " c",

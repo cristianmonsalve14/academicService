@@ -129,7 +129,7 @@ public class StudentController {
 
     @DeleteMapping("/{id}")
     public void deleteStudent(@PathVariable Long id) {
-        access.requireAdmin();
+        access.requireSuperAdmin();
         studentService.deleteStudent(id);
     }
 }

@@ -30,6 +30,8 @@ public class TeacherDTO {
 
     private Long userId;
 
+    private String authUsername;
+
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
@@ -171,6 +173,14 @@ public class TeacherDTO {
 
     public void setUserId(Long userId) {
         this.userId = userId;
+    }
+
+    public String getAuthUsername() {
+        return authUsername;
+    }
+
+    public void setAuthUsername(String authUsername) {
+        this.authUsername = authUsername;
     }
 
     public LocalDateTime getCreatedAt() {

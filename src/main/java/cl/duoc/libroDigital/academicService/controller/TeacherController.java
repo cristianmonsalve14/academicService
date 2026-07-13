@@ -47,6 +47,7 @@ public class TeacherController {
         dto.setContractType(catalogs.code("contract_types", teacher.getContractTypeId()));
         dto.setTeacherStatus(catalogs.code("teacher_statuses", teacher.getTeacherStatusId()));
         dto.setUserId(teacher.getUserId());
+        dto.setAuthUsername(teacher.getAuthUsername());
         dto.setCreatedAt(teacher.getCreatedAt());
         dto.setUpdatedAt(teacher.getUpdatedAt());
         return dto;
@@ -73,12 +74,15 @@ public class TeacherController {
         }
         teacher.setTeacherStatusId(catalogs.requireId("teacher_statuses", dto.getTeacherStatus()));
         teacher.setUserId(dto.getUserId());
+        if (dto.getAuthUsername() != null && !dto.getAuthUsername().isBlank()) {
+            teacher.setAuthUsername(dto.getAuthUsername().trim());
+        }
         return teacher;
     }
 
     @PostMapping
     public TeacherDTO createTeacher(@RequestBody TeacherDTO dto) {
-        access.requireAdmin();
+        access.requireSuperAdmin();
         return toDTO(teacherService.createTeacher(toEntity(dto)));
     }
 
@@ -113,7 +117,7 @@ public class TeacherController {
 
     @DeleteMapping("/{id}")
     public void deleteTeacher(@PathVariable Long id) {
-        access.requireAdmin();
+        access.requireSuperAdmin();
         teacherService.deleteTeacher(id);
     }
 }

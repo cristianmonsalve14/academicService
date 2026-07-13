@@ -5,8 +5,11 @@ import cl.duoc.libroDigital.academicService.dto.EvaluationDTO;
 import cl.duoc.libroDigital.academicService.repository.SubjectRepository;
 import cl.duoc.libroDigital.academicService.service.CatalogLookupService;
 import cl.duoc.libroDigital.academicService.service.EvaluationService;
+import cl.duoc.libroDigital.academicService.service.MessageService;
 import cl.duoc.libroDigital.academicService.security.AcademicAccessService;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -16,20 +19,25 @@ import java.util.stream.Collectors;
 @RequestMapping("/evaluations")
 public class EvaluationController {
 
+    private static final Logger log = LoggerFactory.getLogger(EvaluationController.class);
+
     private final EvaluationService evaluationService;
     private final SubjectRepository subjectRepository;
     private final CatalogLookupService catalogs;
     private final AcademicAccessService access;
+    private final MessageService messageService;
 
     public EvaluationController(
             EvaluationService evaluationService,
             SubjectRepository subjectRepository,
             CatalogLookupService catalogs,
-            AcademicAccessService access) {
+            AcademicAccessService access,
+            MessageService messageService) {
         this.evaluationService = evaluationService;
         this.subjectRepository = subjectRepository;
         this.catalogs = catalogs;
         this.access = access;
+        this.messageService = messageService;
     }
 
     private EvaluationDTO toDTO(Evaluation e) {
@@ -70,6 +78,13 @@ public class EvaluationController {
     public EvaluationDTO createEvaluation(@RequestBody EvaluationDTO dto) {
         access.ensureCanManageEvaluationSubject(dto.getSubjectId());
         Evaluation created = evaluationService.createEvaluation(toEntity(dto));
+        try {
+            String typeLabel = catalogs.code("evaluation_types", created.getEvaluationTypeId());
+            messageService.notifyGuardiansEvaluationCreated(created, typeLabel);
+        } catch (Exception ex) {
+            log.warn("Evaluación {} creada, pero falló el aviso a apoderados: {}",
+                    created.getId(), ex.getMessage());
+        }
         return toDTO(created);
     }
 

@@ -124,7 +124,7 @@ public class EnrollmentController {
 
     @DeleteMapping("/{id}")
     public void deleteEnrollment(@PathVariable Long id) {
-        access.requireAdmin();
+        access.requireSuperAdmin();
         enrollmentService.deleteEnrollment(id);
     }
 }

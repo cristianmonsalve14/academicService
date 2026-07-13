@@ -123,12 +123,14 @@ public class AcademicAccessService {
 
 
     public boolean isAdmin() {
-
-        return hasRole("ADMINISTRADOR");
-
+        return hasRole("ADMINISTRADOR")
+                || hasRole("SUPER_ADMINISTRADOR")
+                || hasRole("ADMINISTRATIVO");
     }
 
-
+    public boolean isSuperAdmin() {
+        return hasRole("ADMINISTRADOR") || hasRole("SUPER_ADMINISTRADOR");
+    }
 
     public boolean isTeacher() {
 
@@ -155,16 +157,16 @@ public class AcademicAccessService {
 
 
     public void requireAdmin() {
-
         if (!isAdmin()) {
-
             throw new ForbiddenException("Solo administración puede realizar esta acción");
-
         }
-
     }
 
-
+    public void requireSuperAdmin() {
+        if (!isSuperAdmin()) {
+            throw new ForbiddenException("Solo super administración puede realizar esta acción");
+        }
+    }
 
     public void requireTeacherOrAdmin() {
 
@@ -766,8 +768,51 @@ public class AcademicAccessService {
 
         }
 
-        return teacherRepository.findByAuthUsername(principal.getUsername());
+        if (principal.getUsername() != null && !principal.getUsername().isBlank()) {
 
+            Optional<Teacher> byUsername = teacherRepository.findByAuthUsername(principal.getUsername());
+
+            if (byUsername.isPresent()) {
+
+                return Optional.of(linkTeacherAccess(byUsername.get(), principal));
+
+            }
+
+        }
+
+        if (principal.getEmail() != null && !principal.getEmail().isBlank()) {
+
+            Optional<Teacher> byEmail = teacherRepository.findByEmailIgnoreCase(principal.getEmail().trim());
+
+            if (byEmail.isPresent()) {
+
+                return Optional.of(linkTeacherAccess(byEmail.get(), principal));
+
+            }
+
+        }
+
+        return Optional.empty();
+
+    }
+
+    /** Vincula ficha docente con la cuenta de acceso la primera vez que coincide. */
+    private Teacher linkTeacherAccess(Teacher teacher, JwtUserPrincipal principal) {
+        boolean changed = false;
+        if (principal.getUserId() != null && !Objects.equals(teacher.getUserId(), principal.getUserId())) {
+            teacher.setUserId(principal.getUserId());
+            changed = true;
+        }
+        if (principal.getUsername() != null && !principal.getUsername().isBlank()
+                && (teacher.getAuthUsername() == null || teacher.getAuthUsername().isBlank()
+                || !teacher.getAuthUsername().equalsIgnoreCase(principal.getUsername()))) {
+            // Solo sobrescribe si estaba vacío o coincide en mayúsculas/minúsculas
+            if (teacher.getAuthUsername() == null || teacher.getAuthUsername().isBlank()) {
+                teacher.setAuthUsername(principal.getUsername());
+                changed = true;
+            }
+        }
+        return changed ? teacherRepository.save(teacher) : teacher;
     }
 
 

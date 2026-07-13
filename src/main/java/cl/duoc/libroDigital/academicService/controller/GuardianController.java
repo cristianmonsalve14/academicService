@@ -143,7 +143,7 @@ public class GuardianController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteGuardian(@PathVariable Long id) {
-        access.requireAdmin();
+        access.requireSuperAdmin();
         guardianService.deleteGuardian(id);
         return ResponseEntity.noContent().build();
     }

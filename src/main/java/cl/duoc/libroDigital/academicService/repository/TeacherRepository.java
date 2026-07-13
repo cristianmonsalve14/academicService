@@ -12,6 +12,8 @@ public interface TeacherRepository extends JpaRepository<Teacher, Long> {
 
     Optional<Teacher> findByEmail(String email);
 
+    Optional<Teacher> findByEmailIgnoreCase(String email);
+
     Optional<Teacher> findByEmployeeNumber(String employeeNumber);
 
     // Buscar profesores por estado

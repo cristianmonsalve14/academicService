@@ -73,7 +73,7 @@ public class CourseController {
 
     @PostMapping
     public CourseDTO createCourse(@RequestBody CourseDTO dto) {
-        access.requireAdmin();
+        access.requireSuperAdmin();
         Course created = courseService.createCourse(toEntity(dto));
         return toDTO(created);
     }
@@ -116,7 +116,7 @@ public class CourseController {
 
     @DeleteMapping("/{id}")
     public void deleteCourse(@PathVariable Long id) {
-        access.requireAdmin();
+        access.requireSuperAdmin();
         courseService.deleteCourse(id);
     }
 

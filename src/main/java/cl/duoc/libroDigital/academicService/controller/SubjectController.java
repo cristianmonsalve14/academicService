@@ -62,7 +62,7 @@ public class SubjectController {
 
     @PostMapping
     public SubjectDTO createSubject(@RequestBody SubjectDTO dto) {
-        access.requireAdmin();
+        access.requireSuperAdmin();
         return toDTO(subjectService.createSubject(toEntity(dto)));
     }
 
@@ -91,7 +91,7 @@ public class SubjectController {
 
     @DeleteMapping("/{id}")
     public void deleteSubject(@PathVariable Long id) {
-        access.requireAdmin();
+        access.requireSuperAdmin();
         subjectService.deleteSubject(id);
     }
 }

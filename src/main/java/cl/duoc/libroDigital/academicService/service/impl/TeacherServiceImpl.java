@@ -109,7 +109,11 @@ public class TeacherServiceImpl implements TeacherService {
 
             if (teacher.getTeacherStatusId() != null) existing.setTeacherStatusId(teacher.getTeacherStatusId());
 
+            if (teacher.getUserId() != null) existing.setUserId(teacher.getUserId());
 
+            if (teacher.getAuthUsername() != null && !teacher.getAuthUsername().isBlank()) {
+                existing.setAuthUsername(teacher.getAuthUsername().trim());
+            }
 
             validator.validateTeacherForSave(existing, id);
 
